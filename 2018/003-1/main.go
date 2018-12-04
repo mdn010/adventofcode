@@ -1,6 +1,7 @@
 package main
 
 import (
+	"adventofcode/common"
 	"fmt"
 	"io/ioutil"
 	"strconv"
