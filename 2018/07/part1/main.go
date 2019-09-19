@@ -64,7 +64,7 @@ func getNext(key string, visited map[string]bool, temp *[]string, mapOfVertices 
 		getNext(pop, visited, temp, mapOfVertices, stack)
 	}
 	pop:=(*temp)[len(*temp)-1]
-    *temp=(*temp)[:len(*temp)-1]
+	*temp=(*temp)[:len(*temp)-1]
 	*stack = append(*stack, pop)}
 
 func main() {
