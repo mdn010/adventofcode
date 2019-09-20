@@ -9,10 +9,8 @@ import (
 )
 
 type graph struct {
-	// [A] [C,D,F]
-	// [B] [C]
 	mapOfVertices map[string][]string
-	parents []string 
+	parents []string
 }
 
 func newGraph() *graph {
@@ -51,21 +49,20 @@ func toCharStr(i int) string {
 	return string('A' - 1 + i)
 }
 
-func getNext(key string, visited map[string]bool, temp *[]string, mapOfVertices map[string][]string, stack *[]string) {
+func getNext(key string, visited map[string]bool, temp *stack, mapOfVertices map[string][]string, result *stack) {
 	if visited[key] {
 		return
 	} else {
 		visited[key] = true
 	}
 
-	*temp = append(*temp, key)
+	temp.Push(key)
 	for i := 1; i <= len(mapOfVertices[key]); i++ {
 		pop:=mapOfVertices[key][len(mapOfVertices[key])-i]
-		getNext(pop, visited, temp, mapOfVertices, stack)
+		getNext(pop, visited, temp, mapOfVertices, result)
 	}
-	pop:=(*temp)[len(*temp)-1]
-	*temp=(*temp)[:len(*temp)-1]
-	*stack = append(*stack, pop)}
+	result.Push(temp.Pop())
+}
 
 func main() {
 	elves := newGraph()
@@ -75,25 +72,47 @@ func main() {
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		line := scanner.Text();
+		line := scanner.Text()
 		var source, target string
 		_, err := fmt.Sscanf(line, "Step %s must be finished before step %s can begin.", &source, &target)
 		common.Checkerror(err)
 		elves.addEdge(source, target)
 	}
 	
-	// fmt.Println(elves.mapOfVertices)
-
-	stack := make([]string, 0, 5)
-	temp := make([]string, 0, 5)
+	result := new(stack);
+	temp := new(stack);
 	visited := make(map[string]bool)
 
 	for i := 26; i >= 1; i-- {
 		key := toCharStr(i)
-		getNext(key, visited, &temp, elves.mapOfVertices, &stack)
+		getNext(key, visited, temp, elves.mapOfVertices, result)
 	}
 
-	for index := len(stack)-1; index >= 0; index-- {
-		fmt.Print(stack[index])
+	for index := result.Size()-1; index >= 0; index-- {
+		fmt.Print(result.Get(index))
 	}
+}
+
+type stack []string
+
+func (s *stack) Push(v string) {
+    *s = append(*s, v)
+}
+
+func (s *stack) Pop() string {
+    res:=(*s)[len(*s)-1]
+    *s=(*s)[:len(*s)-1]
+    return res
+}
+
+func (s *stack) Size() int {
+    return len(*s)
+}
+
+func (s *stack) Get(index int) string {
+    return (*s)[index]
+}
+
+func NewStack() *stack {
+	return new(stack)
 }
