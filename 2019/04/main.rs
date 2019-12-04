@@ -3,9 +3,8 @@ use std::collections::HashMap;
 fn main () {
     let beg = 125730;
     let end = 579381;
-    let mut count = 0;
 
-    (beg..end+1).for_each(|n|{
+    let count:u32 = (beg..end+1).map(|n| {
         let mut hm:HashMap<_,_> = HashMap::new();
         let mut no:HashMap<_,_> = HashMap::new();
         for (i, v) in n.to_string().chars().enumerate() {
@@ -23,8 +22,8 @@ fn main () {
                 .or(hm.get(&2).filter(|d| *d==hm.get(&3).unwrap() && *no.get(d).unwrap() == 2))
                 .or(hm.get(&3).filter(|d| *d==hm.get(&4).unwrap() && *no.get(d).unwrap() == 2))
                 .or(hm.get(&4).filter(|d| *d==hm.get(&5).unwrap() && *no.get(d).unwrap() == 2)))
-            .map(|_| count += 1);
-    });
+            .and_then(|_| Some(1)).unwrap_or(0)
+    }).sum();
 
     println!("{:#?}", count);
 }
